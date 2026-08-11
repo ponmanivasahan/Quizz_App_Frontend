@@ -3,6 +3,59 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { attemptApi } from '../../api/attemptApi';
 import { Trophy, ArrowRight, XCircle, CheckCircle, Clock } from 'lucide-react';
 
+const Confetti = () => {
+  const [pieces, setPieces] = useState([]);
+  
+  useEffect(() => {
+    // Generate 60 professional paper-square confetti pieces
+    const newPieces = Array.from({ length: 60 }).map((_, i) => ({
+      id: i,
+      x: Math.random() * 100, // horizontal percentage
+      delay: Math.random() * 1.5, // animation delay
+      duration: 2.5 + Math.random() * 1.5, // fall duration
+      color: ['#4f46e5', '#10b981', '#f59e0b', '#3b82f6', '#8b5cf6'][Math.floor(Math.random() * 5)], // professional palette
+      size: 6 + Math.random() * 8, // mostly small pieces
+      rotationStart: Math.random() * 360,
+      rotationEnd: (Math.random() > 0.5 ? 1 : -1) * (360 + Math.random() * 720),
+    }));
+    setPieces(newPieces);
+    
+    // Auto remove after 5 seconds to clean DOM and ensure it doesn't loop forever
+    const timer = setTimeout(() => setPieces([]), 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (pieces.length === 0) return null;
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-[100] overflow-hidden">
+      {pieces.map(p => (
+        <div
+          key={p.id}
+          className="absolute -top-10"
+          style={{
+            left: `${p.x}%`,
+            width: `${p.size}px`,
+            height: `${p.size}px`,
+            backgroundColor: p.color,
+            opacity: 0,
+            animation: `confetti-fall-${p.id} ${p.duration}s linear ${p.delay}s forwards`,
+          }}
+        />
+      ))}
+      <style>{`
+        ${pieces.map(p => `
+          @keyframes confetti-fall-${p.id} {
+            0% { transform: translateY(0) rotate(${p.rotationStart}deg); opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateY(120vh) rotate(${p.rotationEnd}deg); opacity: 0; }
+          }
+        `).join('')}
+      `}</style>
+    </div>
+  );
+};
+
 const StudentResult = () => {
   const { attemptId } = useParams();
   const navigate = useNavigate();
@@ -46,10 +99,19 @@ const StudentResult = () => {
 
   const isPass = result.status === 'passed' || result.percentage >= 50;
 
+  // Determine attempts remaining safely
+  const maxAttempts = result.quiz?.maximumAttempts || 2;
+  const attemptsUsed = result.attemptNumber || 1;
+  const attemptsRemaining = typeof result.quiz?.attemptsRemaining !== 'undefined' 
+    ? result.quiz.attemptsRemaining 
+    : Math.max(0, maxAttempts - attemptsUsed);
+
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 flex flex-col items-center font-sans">
       
-      <div className="w-full max-w-3xl animate-zoom-in">
+      {isPass && <Confetti />}
+
+      <div className="w-full max-w-3xl animate-zoom-in relative z-10">
         
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Assessment Complete</h1>
@@ -70,7 +132,7 @@ const StudentResult = () => {
           <div className="p-8 sm:p-12 text-center -mt-8 relative z-10">
             
             {/* The Big Circle */}
-            <div className="w-40 h-40 mx-auto bg-white rounded-full p-2 shadow-xl mb-8 flex items-center justify-center relative">
+            <div className="w-40 h-40 mx-auto bg-white rounded-full p-2 shadow-xl mb-6 flex items-center justify-center relative">
               <svg className="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="45" fill="none" stroke="#f3f4f6" strokeWidth="8" />
                 <circle 
@@ -88,7 +150,17 @@ const StudentResult = () => {
             </div>
 
             <h3 className="text-2xl font-bold text-gray-900 mb-1">{result.quizTitle || result.quiz?.title || 'Assessment'}</h3>
-            <p className="text-gray-500 font-medium mb-10">Submitted on {new Date(result.submittedAt || result.createdAt).toLocaleString()}</p>
+            <p className="text-gray-500 font-medium mb-3">Submitted on {new Date(result.submittedAt || result.createdAt).toLocaleString()}</p>
+            
+            {/* Supportive Feedback Message */}
+            <div className={`inline-block px-4 py-2 rounded-xl mb-8 ${isPass ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
+               <p className="font-semibold text-sm">
+                 {isPass 
+                   ? 'Excellent work! You passed the assessment.' 
+                   : `Review your answers and try again. ${attemptsRemaining > 0 ? `Attempts Remaining: ${attemptsRemaining}` : 'No attempts remaining.'}`
+                 }
+               </p>
+            </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
               <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
@@ -121,10 +193,10 @@ const StudentResult = () => {
                 Review Answers
               </Link>
               <Link 
-                to="/student/dashboard"
+                to="/student/attempts"
                 className="px-8 py-3.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2"
               >
-                Back to Dashboard <ArrowRight className="w-5 h-5" />
+                My Attempts <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
 

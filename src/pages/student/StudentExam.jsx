@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { attemptApi } from '../../api/attemptApi';
 import { quizApi } from '../../api/quizApi';
-import { Clock, AlertTriangle, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Clock, AlertTriangle, CheckCircle, ChevronLeft, ChevronRight, X, AlertCircle } from 'lucide-react';
 
 const StudentExam = () => {
   const { attemptId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [attempt, setAttempt] = useState(null);
   const [quiz, setQuiz] = useState(null);
@@ -21,6 +22,12 @@ const StudentExam = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Modals
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [unansweredCount, setUnansweredCount] = useState(0);
+  const [isSafeToLeave, setIsSafeToLeave] = useState(false);
+
   // Initial load
   useEffect(() => {
     const initializeExam = async () => {
@@ -30,6 +37,7 @@ const StudentExam = () => {
         
         if (attemptRecord.status === 'passed' || attemptRecord.status === 'failed') {
           // Already submitted
+          setIsSafeToLeave(true);
           navigate(`/student/result/${attemptId}`);
           return;
         }
@@ -66,9 +74,39 @@ const StudentExam = () => {
     initializeExam();
   }, [attemptId, navigate]);
 
+  // Security: Prevent navigation & beforeunload
+  useEffect(() => {
+    if (isLoading || error || isSubmitting || isSafeToLeave) return;
+
+    // Browser native close/refresh warning
+    const handleBeforeUnload = (e) => {
+      e.preventDefault();
+      e.returnValue = ''; // Required for modern browsers to show the native warning
+      return '';
+    };
+
+    // Push dummy state to trap back button
+    window.history.pushState(null, '', window.location.href);
+
+    // Trap React Router/Browser internal Back Button
+    const handlePopState = () => {
+      // User pressed back, immediately push state again to stay on page
+      window.history.pushState(null, '', window.location.href);
+      setShowLeaveModal(true);
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [isLoading, error, isSubmitting, isSafeToLeave]);
+
   // Timer logic
   useEffect(() => {
-    if (timeLeft === null || isSubmitting || isLoading || error) return;
+    if (timeLeft === null || isSubmitting || isLoading || error || isSafeToLeave) return;
 
     if (timeLeft <= 0) {
       handleAutoSubmit();
@@ -80,7 +118,7 @@ const StudentExam = () => {
     }, 1000);
 
     return () => clearInterval(timerId);
-  }, [timeLeft, isSubmitting, isLoading, error]);
+  }, [timeLeft, isSubmitting, isLoading, error, isSafeToLeave]);
 
   const handleOptionSelect = (questionId, optionKey) => {
     setAnswers(prev => ({
@@ -102,7 +140,10 @@ const StudentExam = () => {
   };
 
   const submitExamToServer = async (finalAnswers) => {
+    if (isSubmitting) return; // Prevent double submit
     setIsSubmitting(true);
+    setIsSafeToLeave(true); // Disable security warnings during submit
+    
     try {
       // Format answers for backend
       const formattedAnswers = Object.keys(finalAnswers).map(qId => ({
@@ -113,11 +154,12 @@ const StudentExam = () => {
       await attemptApi.submitAttempt(attemptId, { answers: formattedAnswers });
       
       // Navigate to result
-      navigate(`/student/result/${attemptId}`);
+      navigate(`/student/result/${attemptId}`, { replace: true });
     } catch (err) {
       console.error('Submit error:', err);
       alert('Failed to submit exam. Please try again immediately.');
       setIsSubmitting(false);
+      setIsSafeToLeave(false);
     }
   };
 
@@ -125,17 +167,18 @@ const StudentExam = () => {
     submitExamToServer(answers);
   };
 
-  const handleManualSubmit = () => {
-    const unansweredCount = questions.length - Object.keys(answers).length;
-    if (unansweredCount > 0) {
-      const confirm = window.confirm(`You still have ${unansweredCount} unanswered questions. Are you sure you want to submit?`);
-      if (!confirm) return;
-    } else {
-      const confirm = window.confirm('Are you ready to submit your exam?');
-      if (!confirm) return;
-    }
-    
-    submitExamToServer(answers);
+  const checkAndShowSubmitModal = () => {
+    const missing = questions.length - Object.keys(answers).length;
+    setUnansweredCount(missing);
+    setShowSubmitModal(true);
+  };
+
+  const confirmLeave = () => {
+    setIsSafeToLeave(true);
+    setTimeout(() => {
+      // Go back twice to escape the dummy pushState
+      navigate(-2);
+    }, 0);
   };
 
   const formatTime = (seconds) => {
@@ -187,7 +230,83 @@ const StudentExam = () => {
   const isTimeLow = timeLeft !== null && timeLeft < 300; // Less than 5 minutes
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
+    <div className="min-h-screen bg-gray-50 flex flex-col font-sans relative">
+      
+      {/* Leave Quiz Modal */}
+      {showLeaveModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-zoom-in">
+            <div className="flex justify-between items-start mb-4">
+              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-amber-600" />
+              </div>
+              <button onClick={() => setShowLeaveModal(false)} className="text-gray-400 hover:text-gray-600 p-1">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Leave Quiz?</h3>
+            <p className="text-gray-600 mb-6 font-medium">
+              Your quiz is still in progress. Leaving this page may cause you to lose your current progress and this attempt may be marked as incomplete.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button 
+                onClick={confirmLeave}
+                className="px-5 py-2.5 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+              >
+                Leave Quiz
+              </button>
+              <button 
+                onClick={() => setShowLeaveModal(false)}
+                className="px-5 py-2.5 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/20 transition-colors"
+              >
+                Stay on Quiz
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Submit Confirmation Modal */}
+      {showSubmitModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-zoom-in">
+            <div className="flex justify-between items-start mb-4">
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center ${unansweredCount > 0 ? 'bg-amber-100' : 'bg-emerald-100'}`}>
+                {unansweredCount > 0 ? <AlertCircle className="w-6 h-6 text-amber-600" /> : <CheckCircle className="w-6 h-6 text-emerald-600" />}
+              </div>
+              <button onClick={() => setShowSubmitModal(false)} className="text-gray-400 hover:text-gray-600 p-1">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Ready to Submit?</h3>
+            {unansweredCount > 0 ? (
+              <p className="text-gray-600 mb-6 font-medium">
+                You still have <span className="font-bold text-amber-600">{unansweredCount} unanswered questions</span>. Are you sure you want to submit your assessment now?
+              </p>
+            ) : (
+              <p className="text-gray-600 mb-6 font-medium">
+                You have answered all questions. Are you sure you want to submit your assessment now?
+              </p>
+            )}
+            
+            <div className="flex gap-3 justify-end">
+              <button 
+                onClick={() => setShowSubmitModal(false)}
+                className="px-5 py-2.5 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+              >
+                Continue Quiz
+              </button>
+              <button 
+                onClick={() => submitExamToServer(answers)}
+                className="px-5 py-2.5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/20 transition-colors flex items-center gap-2"
+              >
+                Submit Quiz <CheckCircle className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Exam Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -277,7 +396,7 @@ const StudentExam = () => {
             
             {currentQuestionIndex === questions.length - 1 ? (
               <button 
-                onClick={handleManualSubmit}
+                onClick={checkAndShowSubmitModal}
                 className="flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 transition-all hover:-translate-y-0.5"
               >
                 Submit Exam <CheckCircle className="w-5 h-5" />
@@ -339,7 +458,7 @@ const StudentExam = () => {
             
             <div className="mt-8">
               <button 
-                onClick={handleManualSubmit}
+                onClick={checkAndShowSubmitModal}
                 className="w-full py-3 rounded-xl font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-colors"
               >
                 Submit Early

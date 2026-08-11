@@ -13,8 +13,22 @@ const StudentAttempts = () => {
     const fetchAttempts = async () => {
       setIsLoading(true);
       try {
-        const data = await attemptApi.getMyAttempts();
-        setAttempts(Array.isArray(data) ? data : (data.attempts || []));
+        const responseData = await attemptApi.getMyAttempts();
+        
+        let attemptsArray = [];
+        if (Array.isArray(responseData)) {
+          attemptsArray = responseData;
+        } else if (responseData && typeof responseData === 'object') {
+          if (Array.isArray(responseData.attempts)) {
+            attemptsArray = responseData.attempts;
+          } else if (Array.isArray(responseData.data)) {
+            attemptsArray = responseData.data;
+          } else if (responseData.data && Array.isArray(responseData.data.attempts)) {
+            attemptsArray = responseData.data.attempts;
+          }
+        }
+        
+        setAttempts(attemptsArray);
       } catch (error) {
         console.error('Failed to load attempts:', error);
       } finally {

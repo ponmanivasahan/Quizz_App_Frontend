@@ -15,8 +15,20 @@ const StudentQuizzes = () => {
   const fetchQuizzes = async () => {
     setIsLoading(true);
     try {
-      const data = await quizApi.getAllQuizzes();
-      const allQuizzes = Array.isArray(data) ? data : (data.quizzes || []);
+      const responseData = await quizApi.getAllQuizzes();
+      
+      let allQuizzes = [];
+      if (Array.isArray(responseData)) {
+        allQuizzes = responseData;
+      } else if (responseData && typeof responseData === 'object') {
+        if (Array.isArray(responseData.quizzes)) {
+          allQuizzes = responseData.quizzes;
+        } else if (Array.isArray(responseData.data)) {
+          allQuizzes = responseData.data;
+        } else if (responseData.data && Array.isArray(responseData.data.quizzes)) {
+          allQuizzes = responseData.data.quizzes;
+        }
+      }
       // Students should only see published/active quizzes
       const published = allQuizzes.filter(q => q.status === 'published' || q.status === 'active');
       setQuizzes(published);

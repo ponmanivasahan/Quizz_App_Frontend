@@ -6,14 +6,37 @@ import { AuthContext } from '../../context/AuthContext';
 
 const StudentLeaderboard = () => {
   const [leaderboard, setLeaderboard] = useState([]);
+  const [myRankData, setMyRankData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const data = await analyticsApi.getLeaderboard();
-        setLeaderboard(Array.isArray(data) ? data : []);
+        const responseData = await analyticsApi.getLeaderboard();
+        
+        let lbArray = [];
+        if (Array.isArray(responseData)) {
+          lbArray = responseData;
+        } else if (responseData && typeof responseData === 'object') {
+          // Check common wrapper patterns
+          if (Array.isArray(responseData.leaderboard)) {
+            lbArray = responseData.leaderboard;
+          } else if (Array.isArray(responseData.data)) {
+            lbArray = responseData.data;
+          } else if (responseData.data && Array.isArray(responseData.data.leaderboard)) {
+            lbArray = responseData.data.leaderboard;
+          }
+          
+          // Extract myRank
+          if (responseData.myRank) {
+            setMyRankData(responseData.myRank);
+          } else if (responseData.data && responseData.data.myRank) {
+            setMyRankData(responseData.data.myRank);
+          }
+        }
+        
+        setLeaderboard(lbArray);
       } catch (error) {
         console.error('Failed to load leaderboard:', error);
       } finally {
@@ -67,7 +90,7 @@ const StudentLeaderboard = () => {
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gray-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">2nd</div>
                   <div>
                     <h3 className="font-bold text-gray-900 truncate">{topThree[1].name}</h3>
-                    <p className="text-xs font-semibold text-gray-500">{topThree[1].totalAttempts} Quizzes</p>
+                    <p className="text-xs font-semibold text-gray-500">{topThree[1].totalAttempts || topThree[1].attempts} Quizzes</p>
                   </div>
                   <p className="text-xl font-black text-indigo-600">{Math.round(topThree[1].averagePercentage || 0)}%</p>
                 </div>
@@ -92,7 +115,7 @@ const StudentLeaderboard = () => {
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-amber-500 text-white text-xs font-bold px-3 py-0.5 rounded-full shadow-sm">1st Place</div>
                   <div>
                     <h3 className="font-bold text-gray-900 text-lg truncate">{topThree[0].name}</h3>
-                    <p className="text-xs font-semibold text-gray-500">{topThree[0].totalAttempts} Quizzes</p>
+                    <p className="text-xs font-semibold text-gray-500">{topThree[0].totalAttempts || topThree[0].attempts} Quizzes</p>
                   </div>
                   <p className="text-3xl font-black text-amber-600">{Math.round(topThree[0].averagePercentage || 0)}%</p>
                 </div>
@@ -121,6 +144,25 @@ const StudentLeaderboard = () => {
             )}
           </div>
 
+          {/* Current User Rank Highlight */}
+          {myRankData && (
+             <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 mb-6 flex items-center justify-between animate-fade-in shadow-sm shadow-indigo-100/50">
+               <div className="flex items-center gap-4">
+                 <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold">
+                   #{myRankData.rank || '?'}
+                 </div>
+                 <div>
+                   <h4 className="font-bold text-indigo-900">Your Ranking</h4>
+                   <p className="text-sm font-medium text-indigo-700/80">Keep going to reach the top!</p>
+                 </div>
+               </div>
+               <div className="text-right">
+                 <p className="font-bold text-indigo-900">{Math.round(myRankData.averagePercentage || 0)}%</p>
+                 <p className="text-xs font-semibold text-indigo-700/80">Avg. Score: {myRankData.averageScore || 0}</p>
+               </div>
+             </div>
+          )}
+
           {/* List for the rest */}
           {rest.length > 0 && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] overflow-hidden animate-slide-up stagger-2">
@@ -131,7 +173,8 @@ const StudentLeaderboard = () => {
                       <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-20">Rank</th>
                       <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Student</th>
                       <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Attempts</th>
-                      <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Average</th>
+                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Avg Score</th>
+                      <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Average %</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-50">
@@ -155,7 +198,10 @@ const StudentLeaderboard = () => {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">
-                            {student.totalAttempts}
+                            {student.totalAttempts || student.attempts || 0}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">
+                            {student.averageScore !== undefined ? Number(student.averageScore).toFixed(1) : '-'}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right">
                             <span className="font-bold text-gray-900">{Math.round(student.averagePercentage || 0)}%</span>
