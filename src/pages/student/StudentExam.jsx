@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { attemptApi } from '../../api/attemptApi';
 import { quizApi } from '../../api/quizApi';
-import { Clock, AlertTriangle, CheckCircle, ChevronLeft, ChevronRight, X, AlertCircle } from 'lucide-react';
+import { Clock, AlertTriangle, CheckCircle, ChevronLeft, ChevronRight, X, AlertCircle, Bookmark } from 'lucide-react';
 
 const StudentExam = () => {
   const { attemptId } = useParams();
@@ -16,7 +16,7 @@ const StudentExam = () => {
   
   // Map of questionId -> selectedOption
   const [answers, setAnswers] = useState({});
-  
+  const [markedForReview, setMarkedForReview] = useState(new Set());
   const [timeLeft, setTimeLeft] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -139,6 +139,19 @@ const StudentExam = () => {
     }
   };
 
+  const toggleMarkForReview = () => {
+    if (!currentQuestion) return;
+    setMarkedForReview(prev => {
+      const next = new Set(prev);
+      if (next.has(currentQuestion.id)) {
+        next.delete(currentQuestion.id);
+      } else {
+        next.add(currentQuestion.id);
+      }
+      return next;
+    });
+  };
+
   const submitExamToServer = async (finalAnswers) => {
     if (isSubmitting) return; // Prevent double submit
     setIsSubmitting(true);
@@ -199,7 +212,7 @@ const StudentExam = () => {
   if (error || !quiz || questions.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 max-w-md w-full text-center">
+        <div className="bg-white p-8 rounded-2xl  border border-gray-100 max-w-md w-full text-center">
           <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-gray-900 mb-2">Error</h2>
           <p className="text-gray-500 mb-6">{error || 'No questions found for this quiz.'}</p>
@@ -308,15 +321,23 @@ const StudentExam = () => {
       )}
 
       {/* Exam Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-30 ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
              <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
                <span className="font-bold text-indigo-700 text-lg">Q</span>
              </div>
-             <div>
+              <div>
                <h1 className="font-bold text-gray-900 leading-tight hidden sm:block">{quiz.title}</h1>
-               <p className="text-xs text-gray-500 font-medium">Exam in progress</p>
+               <div className="flex items-center gap-3 mt-1">
+                 <p className="text-xs text-gray-500 font-bold tracking-wider uppercase">Question {currentQuestionIndex + 1} of {questions.length}</p>
+                 <div className="hidden sm:block w-32 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                   <div 
+                     className="h-full bg-indigo-600 rounded-full transition-all duration-500 ease-out"
+                     style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
+                   ></div>
+                 </div>
+               </div>
              </div>
           </div>
           
@@ -333,13 +354,13 @@ const StudentExam = () => {
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
         
         {/* Left Side: Question Area */}
-        <div className="flex-1 flex flex-col animate-fade-in relative z-10">
+        <div className="flex-1 flex flex-col animate-fade-in relative z-10 w-full max-w-full overflow-hidden">
           
-          <div className="bg-white rounded-2xl shadow-[0_2px_15px_rgb(0,0,0,0.03)] border border-gray-100 overflow-hidden flex-1 flex flex-col">
+          <div key={currentQuestion.id} className="bg-white rounded-2xl shadow-[0_2px_15px_rgb(0,0,0,0.03)] border border-gray-100 overflow-hidden flex-1 flex flex-col animate-fade-in">
             <div className="p-6 sm:p-10 border-b border-gray-100">
               <div className="flex justify-between items-center mb-6">
                 <span className="text-sm font-bold text-indigo-600 uppercase tracking-wider bg-indigo-50 px-3 py-1 rounded-full">
-                  Question {currentQuestionIndex + 1} of {questions.length}
+                  Question {currentQuestionIndex + 1}
                 </span>
                 <span className="text-sm font-bold text-gray-400">
                   {currentQuestion.marks} Point{currentQuestion.marks !== 1 ? 's' : ''}
@@ -385,7 +406,7 @@ const StudentExam = () => {
           </div>
 
           {/* Navigation Controls */}
-          <div className="mt-6 flex items-center justify-between">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
             <button 
               onClick={handlePrev}
               disabled={currentQuestionIndex === 0}
@@ -394,38 +415,55 @@ const StudentExam = () => {
               <ChevronLeft className="w-5 h-5" /> Previous
             </button>
             
-            {currentQuestionIndex === questions.length - 1 ? (
+            <div className="flex items-center gap-3 ml-auto">
               <button 
-                onClick={checkAndShowSubmitModal}
-                className="flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 transition-all hover:-translate-y-0.5"
+                onClick={toggleMarkForReview}
+                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-colors border ${
+                  markedForReview.has(currentQuestion.id)
+                    ? 'bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100'
+                    : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                }`}
               >
-                Submit Exam <CheckCircle className="w-5 h-5" />
+                <Bookmark className={`w-5 h-5 ${markedForReview.has(currentQuestion.id) ? 'fill-amber-500' : ''}`} /> 
+                <span className="hidden sm:inline">Review</span>
               </button>
-            ) : (
-              <button 
-                onClick={handleNext}
-                className="flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 transition-all hover:-translate-y-0.5"
-              >
-                Next <ChevronRight className="w-5 h-5" />
-              </button>
-            )}
+
+              {currentQuestionIndex === questions.length - 1 ? (
+                <button 
+                  onClick={checkAndShowSubmitModal}
+                  className="flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 transition-all hover:-translate-y-0.5"
+                >
+                  Submit <CheckCircle className="w-5 h-5" />
+                </button>
+              ) : (
+                <button 
+                  onClick={handleNext}
+                  className="flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 transition-all hover:-translate-y-0.5"
+                >
+                  Next <ChevronRight className="w-5 h-5" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Right Side: Question Navigator */}
         <div className="w-full lg:w-72 shrink-0 animate-slide-in-right">
-          <div className="bg-white rounded-2xl shadow-[0_2px_15px_rgb(0,0,0,0.03)] border border-gray-100 p-6 sticky top-24">
-            <h3 className="font-bold text-gray-900 mb-4">Question Navigator</h3>
+          <div className="bg-white rounded-2xl shadow-[0_2px_15px_rgb(0,0,0,0.03)] border border-gray-100 p-6 sticky top-24 flex flex-col max-h-[calc(100vh-8rem)]">
+            <h3 className="font-bold text-gray-900 mb-4 shrink-0">Question Navigator</h3>
             
-            <div className="grid grid-cols-5 gap-2">
+            <div className="grid grid-cols-5 gap-2 overflow-y-auto pr-2 custom-scrollbar flex-1 pb-4">
               {questions.map((q, idx) => {
                 const isCurrent = currentQuestionIndex === idx;
                 const isAnswered = answers[q.id] !== undefined;
+                const isMarked = markedForReview.has(q.id);
                 
                 let btnClass = "w-full aspect-square rounded-lg font-bold text-sm flex items-center justify-center transition-all duration-200 border-2 ";
                 
                 if (isCurrent) {
                   btnClass += "border-indigo-600 bg-indigo-600 text-white shadow-md shadow-indigo-600/30 scale-110 relative z-10";
+                } else if (isMarked) {
+                  btnClass += "border-amber-400 bg-amber-50 text-amber-700 cursor-pointer hover:bg-amber-100";
                 } else if (isAnswered) {
                   btnClass += "border-emerald-500 bg-emerald-50 text-emerald-700 cursor-pointer hover:bg-emerald-100";
                 } else {
@@ -444,12 +482,15 @@ const StudentExam = () => {
               })}
             </div>
 
-            <div className="mt-8 pt-6 border-t border-gray-100 space-y-3">
+            <div className="mt-4 pt-6 border-t border-gray-100 space-y-3 shrink-0">
               <div className="flex items-center gap-3 text-sm font-medium text-gray-600">
                 <div className="w-4 h-4 rounded bg-indigo-600"></div> Current
               </div>
               <div className="flex items-center gap-3 text-sm font-medium text-gray-600">
                 <div className="w-4 h-4 rounded border-2 border-emerald-500 bg-emerald-50"></div> Answered
+              </div>
+              <div className="flex items-center gap-3 text-sm font-medium text-gray-600">
+                <div className="w-4 h-4 rounded border-2 border-amber-400 bg-amber-50"></div> Review
               </div>
               <div className="flex items-center gap-3 text-sm font-medium text-gray-600">
                 <div className="w-4 h-4 rounded border-2 border-gray-200 bg-white"></div> Unanswered

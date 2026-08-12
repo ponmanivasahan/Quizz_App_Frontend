@@ -74,7 +74,7 @@ const StudentReview = () => {
                     {isCorrect ? <CheckCircle className="w-6 h-6 text-emerald-500" /> : <XCircle className="w-6 h-6 text-red-500" />}
                     <h3 className={`font-bold ${isCorrect ? 'text-emerald-900' : 'text-red-900'}`}>Question {index + 1}</h3>
                   </div>
-                  <div className="text-sm font-bold bg-white px-3 py-1 rounded-full shadow-sm">
+                  <div className="text-sm font-bold bg-white px-3 py-1 rounded-full ">
                     {isCorrect ? q.marks : 0} / {q.marks} Points
                   </div>
                 </div>
@@ -119,12 +119,12 @@ const StudentReview = () => {
                               <span className="font-bold mr-2">{optKey}.</span> {optionText}
                             </p>
                             {isSelected && (
-                              <span className="inline-block mt-2 text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-white shadow-sm border border-gray-100 text-gray-500">
+                              <span className="inline-block mt-2 text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-white  border border-gray-100 text-gray-500">
                                 Your Answer
                               </span>
                             )}
                             {isActualCorrect && !isSelected && (
-                              <span className="inline-block mt-2 text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-white shadow-sm border border-gray-100 text-emerald-600">
+                              <span className="inline-block mt-2 text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-white  border border-gray-100 text-emerald-600">
                                 Correct Answer
                               </span>
                             )}

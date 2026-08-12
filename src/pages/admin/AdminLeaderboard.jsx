@@ -37,7 +37,7 @@ const AdminLeaderboard = () => {
     <div className="space-y-6 max-w-5xl mx-auto">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Student Leaderboard</h1>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-xl  border border-gray-100 overflow-hidden">
         {isLoading ? (
           <div className="p-8 text-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div></div>
         ) : error ? (

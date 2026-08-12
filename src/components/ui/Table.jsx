@@ -17,7 +17,7 @@ const Table = ({
 
   if (!data || data.length === 0) {
     return (
-      <div className="p-12 text-center text-gray-500 bg-white rounded-xl shadow-sm border border-gray-100">
+      <div className="p-12 text-center text-gray-500 bg-white rounded-xl  border border-gray-100">
         <p>{emptyMessage}</p>
       </div>
     );

@@ -50,7 +50,7 @@ const StudentLayout = () => {
       >
         <div className="flex items-center justify-between h-20 px-8">
           <div className="flex items-center gap-3">
-             <div className="bg-indigo-600 p-2 rounded-lg shadow-sm">
+             <div className="bg-indigo-600 p-2 rounded-lg ">
                 <BookOpen className="h-6 w-6 text-white" />
              </div>
              <h1 className="text-xl font-bold text-gray-900 tracking-tight">AssessPro</h1>

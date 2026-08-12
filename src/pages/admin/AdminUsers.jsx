@@ -81,7 +81,7 @@ const AdminUsers = () => {
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-4">
+      <div className="bg-white p-4 rounded-xl  border border-gray-100 flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <Search className="h-5 w-5 text-gray-400" />
@@ -114,9 +114,9 @@ const AdminUsers = () => {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
       ) : error ? (
-        <div className="p-8 text-center text-red-500 bg-white rounded-xl shadow-sm border border-gray-100">{error}</div>
+        <div className="p-8 text-center text-red-500 bg-white rounded-xl  border border-gray-100">{error}</div>
       ) : filteredUsers.length === 0 ? (
-        <div className="p-8 text-center text-gray-500 bg-white rounded-xl shadow-sm border border-gray-100">No users found.</div>
+        <div className="p-8 text-center text-gray-500 bg-white rounded-xl  border border-gray-100">No users found.</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredUsers.map((user) => (

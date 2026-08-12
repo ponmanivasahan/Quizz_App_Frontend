@@ -104,7 +104,7 @@ const StudentLeaderboard = () => {
                   <div className="w-24 h-24 bg-amber-50 rounded-full border-4 border-amber-400 flex items-center justify-center shadow-xl relative z-10">
                     <span className="text-3xl font-bold text-amber-500">{topThree[0].name?.charAt(0).toUpperCase()}</span>
                   </div>
-                  <div className="absolute -bottom-4 -right-2 bg-amber-100 text-amber-600 rounded-full p-1.5 border-2 border-white z-20 shadow-sm">
+                  <div className="absolute -bottom-4 -right-2 bg-amber-100 text-amber-600 rounded-full p-1.5 border-2 border-white z-20 ">
                     <Trophy className="w-6 h-6" />
                   </div>
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
@@ -112,7 +112,7 @@ const StudentLeaderboard = () => {
                   </div>
                 </div>
                 <div className="bg-gradient-to-b from-amber-50 to-white w-full rounded-t-2xl border-t border-l border-r border-amber-200 pt-6 pb-4 px-4 text-center shadow-[0_-10px_40px_rgb(251,191,36,0.15)] h-40 flex flex-col justify-between relative">
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-amber-500 text-white text-xs font-bold px-3 py-0.5 rounded-full shadow-sm">1st Place</div>
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-amber-500 text-white text-xs font-bold px-3 py-0.5 rounded-full ">1st Place</div>
                   <div>
                     <h3 className="font-bold text-gray-900 text-lg truncate">{topThree[0].name}</h3>
                     <p className="text-xs font-semibold text-gray-500">{topThree[0].totalAttempts || topThree[0].attempts} Quizzes</p>
@@ -146,7 +146,7 @@ const StudentLeaderboard = () => {
 
           {/* Current User Rank Highlight */}
           {myRankData && (
-             <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 mb-6 flex items-center justify-between animate-fade-in shadow-sm shadow-indigo-100/50">
+             <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 mb-6 flex items-center justify-between animate-fade-in  shadow-indigo-100/50">
                <div className="flex items-center gap-4">
                  <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold">
                    #{myRankData.rank || '?'}

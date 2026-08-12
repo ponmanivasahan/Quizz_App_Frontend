@@ -3,7 +3,7 @@ import { Eye, Edit, Trash2, Ban } from 'lucide-react';
 
 const UserCard = ({ user, onView, onEdit, onDelete, onBlock }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-xl  border border-gray-100 p-6 flex flex-col hover:shadow-md transition-shadow">
       <div className="flex justify-between items-start mb-4">
         <div>
           <h3 className="text-lg font-bold text-gray-900 truncate" title={user.name}>{user.name}</h3>

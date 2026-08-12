@@ -99,7 +99,7 @@ const StudentDashboard = () => {
     <div className="space-y-6 pb-8 font-sans w-full">
       
       {/* 1. WELCOME HERO */}
-      <section className="bg-[#f0f4ff] rounded-2xl overflow-hidden relative animate-slide-up flex flex-col md:flex-row items-center justify-between p-6 md:p-8 shadow-sm border border-indigo-50">
+      <section className="bg-[#f0f4ff] rounded-2xl overflow-hidden relative animate-slide-up flex flex-col md:flex-row items-center justify-between p-6 md:p-8  border border-indigo-50">
         <div className="flex-1 z-10 max-w-xl">
           <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
             Welcome back, {user?.name?.toUpperCase() || 'STUDENT'}! <span>👋</span>
@@ -128,7 +128,7 @@ const StudentDashboard = () => {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-slide-up stagger-1">
           
-          <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:-translate-y-1 transition-all flex items-center gap-3">
+          <div className="bg-white p-4 rounded-xl border border-gray-100  hover:-translate-y-1 transition-all flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center shrink-0">
               <Target className="w-5 h-5 text-indigo-600" />
             </div>
@@ -138,7 +138,7 @@ const StudentDashboard = () => {
             </div>
           </div>
           
-          <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:-translate-y-1 transition-all flex items-center gap-3">
+          <div className="bg-white p-4 rounded-xl border border-gray-100  hover:-translate-y-1 transition-all flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center shrink-0">
               <BarChart2 className="w-5 h-5 text-purple-600" />
             </div>
@@ -148,7 +148,7 @@ const StudentDashboard = () => {
             </div>
           </div>
           
-          <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:-translate-y-1 transition-all flex items-center gap-3">
+          <div className="bg-white p-4 rounded-xl border border-gray-100  hover:-translate-y-1 transition-all flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
               <CheckCircle className="w-5 h-5 text-emerald-600" />
             </div>
@@ -158,7 +158,7 @@ const StudentDashboard = () => {
             </div>
           </div>
           
-          <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:-translate-y-1 transition-all flex items-center gap-3">
+          <div className="bg-white p-4 rounded-xl border border-gray-100  hover:-translate-y-1 transition-all flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center shrink-0">
               <Trophy className="w-5 h-5 text-amber-600" />
             </div>
@@ -185,7 +185,7 @@ const StudentDashboard = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {availableQuizzes.length > 0 ? availableQuizzes.map(quiz => (
-                <div key={quiz.id} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-h-[160px] group">
+                <div key={quiz.id} className="bg-white p-5 rounded-2xl border border-gray-100  hover:shadow-md transition-all flex flex-col justify-between min-h-[160px] group">
                   <div className="flex gap-4">
                     <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0 group-hover:bg-indigo-600 transition-colors">
                       <BookOpen className="w-5 h-5 text-indigo-600 group-hover:text-white transition-colors" />
@@ -218,7 +218,7 @@ const StudentDashboard = () => {
             <div className="flex justify-between items-center px-1 mb-4">
               <h2 className="text-lg font-bold text-gray-900">Performance Overview</h2>
             </div>
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-center justify-between min-h-[180px]">
+            <div className="bg-white rounded-2xl border border-gray-100  p-6 flex items-center justify-between min-h-[180px]">
               <div className="flex-1 max-w-sm">
                 <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center mb-3">
                   <BarChart2 className="w-5 h-5 text-gray-400" />
@@ -253,7 +253,7 @@ const StudentDashboard = () => {
               <h2 className="text-lg font-bold text-gray-900">Recent Activity</h2>
               <Link to="/student/attempts" className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">History <ArrowRight className="w-3 h-3" /></Link>
             </div>
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <div className="bg-white rounded-2xl border border-gray-100  p-4">
               {recentAttempts.length > 0 ? (
                 <div className="space-y-1">
                   {recentAttempts.map((attempt, idx) => (
@@ -292,7 +292,7 @@ const StudentDashboard = () => {
             </div>
             <div className="grid grid-cols-3 gap-3">
               
-              <div className={`bg-white rounded-2xl p-4 border flex flex-col items-center justify-center text-center transition-all ${recentAttempts.length > 0 ? 'border-indigo-100 shadow-sm' : 'border-gray-100 opacity-50 grayscale'}`}>
+              <div className={`bg-white rounded-2xl p-4 border flex flex-col items-center justify-center text-center transition-all ${recentAttempts.length > 0 ? 'border-indigo-100 ' : 'border-gray-100 opacity-50 grayscale'}`}>
                 <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-2">
                    <Star className="w-6 h-6 text-indigo-600 fill-current" />
                 </div>
@@ -300,7 +300,7 @@ const StudentDashboard = () => {
                 <p className="text-[8px] text-gray-400">Take your first quiz</p>
               </div>
 
-              <div className={`bg-white rounded-2xl p-4 border flex flex-col items-center justify-center text-center transition-all ${recentAttempts.length >= 5 ? 'border-orange-100 shadow-sm' : 'border-gray-100 opacity-50 grayscale'}`}>
+              <div className={`bg-white rounded-2xl p-4 border flex flex-col items-center justify-center text-center transition-all ${recentAttempts.length >= 5 ? 'border-orange-100 ' : 'border-gray-100 opacity-50 grayscale'}`}>
                 <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-2">
                    <Zap className="w-6 h-6 text-orange-500 fill-current" />
                 </div>
@@ -308,7 +308,7 @@ const StudentDashboard = () => {
                 <p className="text-[8px] text-gray-400">Complete 5 quizzes</p>
               </div>
 
-              <div className={`bg-white rounded-2xl p-4 border flex flex-col items-center justify-center text-center transition-all ${(performance?.highestPercentage || 0) >= 90 ? 'border-blue-100 shadow-sm' : 'border-gray-100 opacity-50 grayscale'}`}>
+              <div className={`bg-white rounded-2xl p-4 border flex flex-col items-center justify-center text-center transition-all ${(performance?.highestPercentage || 0) >= 90 ? 'border-blue-100 ' : 'border-gray-100 opacity-50 grayscale'}`}>
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-2">
                    <Trophy className="w-6 h-6 text-blue-500 fill-current" />
                 </div>

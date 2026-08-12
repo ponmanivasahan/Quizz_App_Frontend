@@ -116,21 +116,21 @@ const StudentQuizDetails = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
               <div className="bg-gray-50/80 rounded-2xl p-5 border border-gray-100 flex items-center gap-4">
-                <div className="p-3 bg-white rounded-xl shadow-sm"><Clock className="w-6 h-6 text-indigo-500" /></div>
+                <div className="p-3 bg-white rounded-xl "><Clock className="w-6 h-6 text-indigo-500" /></div>
                 <div>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Duration</p>
                   <p className="text-lg font-bold text-gray-900">{quiz.duration} Mins</p>
                 </div>
               </div>
               <div className="bg-gray-50/80 rounded-2xl p-5 border border-gray-100 flex items-center gap-4">
-                <div className="p-3 bg-white rounded-xl shadow-sm"><Target className="w-6 h-6 text-emerald-500" /></div>
+                <div className="p-3 bg-white rounded-xl "><Target className="w-6 h-6 text-emerald-500" /></div>
                 <div>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Total Marks</p>
                   <p className="text-lg font-bold text-gray-900">{quiz.totalMarks} Points</p>
                 </div>
               </div>
               <div className="bg-gray-50/80 rounded-2xl p-5 border border-gray-100 flex items-center gap-4">
-                <div className="p-3 bg-white rounded-xl shadow-sm"><FileQuestion className="w-6 h-6 text-amber-500" /></div>
+                <div className="p-3 bg-white rounded-xl "><FileQuestion className="w-6 h-6 text-amber-500" /></div>
                 <div>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Questions</p>
                   <p className="text-lg font-bold text-gray-900">{quiz.questionCount || quiz.questions?.length || 'Multiple'}</p>

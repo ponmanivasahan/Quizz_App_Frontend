@@ -286,7 +286,7 @@ const StudentProfile = () => {
                 <h2 className="text-2xl font-bold text-gray-900">Achievements</h2>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className={`p-5 rounded-2xl border transition-all ${attempts.length > 0 ? 'bg-white border-amber-200 shadow-sm' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
+                <div className={`p-5 rounded-2xl border transition-all ${attempts.length > 0 ? 'bg-white border-amber-200 ' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
                   <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center mb-3">
                     <span className="text-xl">⭐</span>
                   </div>
@@ -294,7 +294,7 @@ const StudentProfile = () => {
                   <p className="text-xs text-gray-500 mt-1">Completed your first assessment.</p>
                 </div>
                 
-                <div className={`p-5 rounded-2xl border transition-all ${attempts.length >= 5 ? 'bg-white border-blue-200 shadow-sm' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
+                <div className={`p-5 rounded-2xl border transition-all ${attempts.length >= 5 ? 'bg-white border-blue-200 ' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
                   <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mb-3">
                     <span className="text-xl">🎯</span>
                   </div>
@@ -302,7 +302,7 @@ const StudentProfile = () => {
                   <p className="text-xs text-gray-500 mt-1">Attempted 5 quizzes.</p>
                 </div>
                 
-                <div className={`p-5 rounded-2xl border transition-all ${(performance?.highestPercentage || 0) >= 90 ? 'bg-white border-emerald-200 shadow-sm' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
+                <div className={`p-5 rounded-2xl border transition-all ${(performance?.highestPercentage || 0) >= 90 ? 'bg-white border-emerald-200 ' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
                   <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center mb-3">
                     <span className="text-xl">🏆</span>
                   </div>
@@ -310,7 +310,7 @@ const StudentProfile = () => {
                   <p className="text-xs text-gray-500 mt-1">Scored above 90%.</p>
                 </div>
 
-                <div className={`p-5 rounded-2xl border transition-all ${attempts.length >= 10 ? 'bg-white border-purple-200 shadow-sm' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
+                <div className={`p-5 rounded-2xl border transition-all ${attempts.length >= 10 ? 'bg-white border-purple-200 ' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
                   <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mb-3">
                     <span className="text-xl">👑</span>
                   </div>
@@ -358,7 +358,7 @@ const StudentProfile = () => {
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Account Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div className="flex items-start gap-4 p-4 rounded-xl bg-gray-50/50">
-                  <div className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 bg-white rounded-full  flex items-center justify-center shrink-0">
                     <User className="w-5 h-5 text-gray-600" />
                   </div>
                   <div>
@@ -367,7 +367,7 @@ const StudentProfile = () => {
                   </div>
                 </div>
                 <div className="flex items-start gap-4 p-4 rounded-xl bg-gray-50/50">
-                  <div className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 bg-white rounded-full  flex items-center justify-center shrink-0">
                     <Mail className="w-5 h-5 text-gray-600" />
                   </div>
                   <div>
@@ -376,7 +376,7 @@ const StudentProfile = () => {
                   </div>
                 </div>
                 <div className="flex items-start gap-4 p-4 rounded-xl bg-gray-50/50">
-                  <div className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 bg-white rounded-full  flex items-center justify-center shrink-0">
                     <Shield className="w-5 h-5 text-gray-600" />
                   </div>
                   <div>
@@ -385,7 +385,7 @@ const StudentProfile = () => {
                   </div>
                 </div>
                 <div className="flex items-start gap-4 p-4 rounded-xl bg-gray-50/50">
-                  <div className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 bg-white rounded-full  flex items-center justify-center shrink-0">
                     <Calendar className="w-5 h-5 text-gray-600" />
                   </div>
                   <div>

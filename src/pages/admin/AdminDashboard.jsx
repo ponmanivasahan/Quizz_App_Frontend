@@ -44,7 +44,7 @@ const AdminDashboard = () => {
   }, []);
 
   const StatCard = ({ title, value, icon: Icon, colorClass }) => (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center">
+    <div className="bg-white rounded-xl  border border-gray-100 p-6 flex items-center">
       <div className={`p-4 rounded-full mr-4 ${colorClass}`}>
         <Icon className="w-6 h-6 text-white" />
       </div>
@@ -75,8 +75,8 @@ const AdminDashboard = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
-        <Link to="/admin/quizzes/create" className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
-          Create New Quiz
+        <Link to="/admin/quizzes" className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+          Manage Quizzes
         </Link>
       </div>
 
@@ -91,7 +91,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Recent Activity Section */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-xl  border border-gray-100 overflow-hidden">
         <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
           <h2 className="text-lg font-semibold text-gray-800">Recent Quiz Attempts</h2>
           <Link to="/admin/attempts" className="text-sm font-medium text-blue-600 hover:text-blue-800">

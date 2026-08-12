@@ -238,7 +238,7 @@ const AdminQuizzes = () => {
       </div>
 
       {error ? (
-        <div className="p-8 text-center text-red-500 bg-white rounded-xl shadow-sm border border-gray-100">{error}</div>
+        <div className="p-8 text-center text-red-500 bg-white rounded-xl  border border-gray-100">{error}</div>
       ) : (
         <Table 
           columns={columns} 
