@@ -126,7 +126,7 @@ const StudentPerformance = () => {
             />
             <StatBox 
               title="Average Score" 
-              value={performance.averageScore ? performance.averageScore.toFixed(1) : '0'} 
+              value={performance.averageScore !== undefined && performance.averageScore !== null ? Number(performance.averageScore).toFixed(1) : '0'} 
               icon={TrendingUp}
               colorClass="bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-200"
             />

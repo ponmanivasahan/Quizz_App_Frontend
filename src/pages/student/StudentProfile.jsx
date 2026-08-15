@@ -262,7 +262,7 @@ const StudentProfile = () => {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right">
                             <Link 
-                              to={`/student/result/${attempt.id}`}
+                              to={`/student/result/`}
                               className="text-indigo-600 hover:text-indigo-900 font-bold text-sm"
                             >
                               View Result

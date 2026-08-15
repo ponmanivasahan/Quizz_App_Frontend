@@ -102,7 +102,7 @@ const StudentDashboard = () => {
       <section className="bg-[#f0f4ff] rounded-2xl overflow-hidden relative animate-slide-up flex flex-col md:flex-row items-center justify-between p-6 md:p-8  border border-indigo-50">
         <div className="flex-1 z-10 max-w-xl">
           <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-            Welcome back, {user?.name?.toUpperCase() || 'STUDENT'}! <span>👋</span>
+            Welcome back, {user?.name?.toUpperCase() || 'STUDENT'}! 
           </h1>
           <p className="text-gray-600 font-medium text-base mb-6">
             Ready to test your knowledge and improve your skills?<br/>
@@ -257,7 +257,7 @@ const StudentDashboard = () => {
               {recentAttempts.length > 0 ? (
                 <div className="space-y-1">
                   {recentAttempts.map((attempt, idx) => (
-                    <Link key={attempt.id || idx} to={`/student/result/${attempt.id}`} className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-colors">
+                    <Link key={attempt.id || idx} to={`/student/result/`} className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-colors">
                       <div className="flex items-center gap-3">
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${attempt.status === 'passed' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'}`}>
                           <Monitor className="w-4 h-4" />

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -23,8 +23,8 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      // Clear localStorage if unauthorized or forbidden
+    if (error.response && error.response.status === 401) {
+      // Clear localStorage if unauthorized (invalid/expired token)
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       // Only redirect if not already on the login page to avoid loops
