@@ -20,6 +20,18 @@ const Login = () => {
     setError('');
     setIsLoading(true);
 
+    // Frontend bypass for testing admin login
+    if (email === 'admin123@gmail.com' && password === '12345') {
+      login('mock-admin-token', {
+        email: 'admin123@gmail.com',
+        name: 'Admin User',
+        role: 'admin'
+      });
+      navigate('/admin/dashboard');
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await authApi.login({ email, password });
       login(response.token, response.user);
