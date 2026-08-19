@@ -21,7 +21,7 @@ const Login = () => {
     setIsLoading(true);
 
     // Frontend bypass for testing admin login
-    if (email === 'admin123@gmail.com' && password === '12345') {
+    if (email === 'admin123@gmail.com' && password === '1234567') {
       login('mock-admin-token', {
         email: 'admin123@gmail.com',
         name: 'Admin User',
